@@ -1,35 +1,43 @@
-# Tittle
+# Deforestation
 
-Deforestation
+## Concept
 
-# Concept
+Somos un trabajador de una empresa de recolección de recursos. Nuestro robot recolector se ha averiado justo al llegar a la isla a la que tanto insistimos en ir.
 
-Somos un trabajador de una empresa de recoleccion de recursos. Nuestro robot recolector se ha estropeado. Tenemos que arreglarlo y volver a base mientras recogemos recursos.
+El fallo resulta extraño, por lo que debemos llegar hasta la base principal de la isla para descubrir sus secretos y encontrar una forma de volver a casa. Sin embargo, parece que alguien no quiere que regresemos, ya que resulta demasiado extraño que un robot de semejante calibre haya dejado de funcionar por una simple caída.
 
-# Genero
+## Género
 
-FPS + control de robot en tercera persona + gestion de recursos.
+* FPS
+* Control de robot en tercera persona
+* Gestión y recolección de recursos
 
-# Plataforma
+## Plataforma
 
-PC 
+* PC
+* Realidad Virtual (futuro)
 
-A futuro en Realidad Virtual
+## Target
 
-# Target
+* Empresas de desarrollo de videojuegos
+* Portfolio profesional
 
-Empresas videojuegos.
+## Jugabilidad / Mecánicas
 
-# Jugabilidad/Mecánicas
+* Movimiento y salto en primera persona
+* Movimiento y salto del robot en tercera persona
+* Inspección del robot y del entorno
+* Reparación y mejora de componentes del robot
+* Recolección de recursos
+* Cambio de perspectiva y control entre personaje y robot
+* Sistema de disparo del robot
 
-- Movimiento + Salto FPS
-- Movimiento + Salto Robot
-- Inspeccionar robot/objetos.
-- Fixear/Upgradear partes robot.
-- Recolectar recursos.
-- Cambiar de vista/control.
-- Disparo robot.
+## Arte
 
-# Arte
+Estética **Realista Low Poly**, manteniendo el diseño y estilo visual del robot como referencia principal.
 
-Siguiendo la estética del robot. Realista Low.
+## Tecnologías
+
+* Unity
+* C#
+* Git / GitHub
