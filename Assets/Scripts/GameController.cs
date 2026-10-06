@@ -18,6 +18,9 @@ namespace Deforestation
 		public TreeTerrainController TerrainController => _terrainController;
 		public Camera MainCamera;
 		public GameObject FakeWater => _fakeWater;
+		public Transform SpawnPoint => _spawnPoint;
+		public GameObject DeathPanel => _deathPanel;
+
 
 		//Events
 		public Action<bool> OnMachineModeChange;
@@ -42,7 +45,9 @@ namespace Deforestation
 		[SerializeField] protected HealthSystem _playerHealth;
 		[SerializeField] protected Inventory _inventory;
 		[SerializeField] protected InteractionSystem _interactionSystem;
-		[SerializeField] private Transform _playerSpawn;
+		[SerializeField] protected Transform _spawnPoint;
+
+
 
 
 		[Header("Camera")]
@@ -56,6 +61,9 @@ namespace Deforestation
 
 		[Header("UI")]
 		[SerializeField] protected UIGameController _uiController;
+		[SerializeField] protected GameObject _deathPanel;
+
+
 		[Header("Trees Terrain")]
 		[SerializeField] protected TreeTerrainController _terrainController;
 		[SerializeField] protected GameObject _fakeWater;
@@ -77,23 +85,29 @@ namespace Deforestation
 			_machine.HealthSystem.OnHealthChanged += _uiController.UpdateMachineHealth;
 			MachineModeOn = false;
 
+            //Death
+            _playerHealth.OnDeath += PlayerDied;
+            _deathPanel.SetActive(false);
+
 		}
+
+
 
 		// Update is called once per frame
 		void Update()
 		{
-			//Water 
-			if (_player.transform.position.y < _waterHeight)
+			//WaterDie
+			if (_player.transform.position.y < _waterHeight && _player.gameObject.activeSelf)
 			{
-				RespawnPlayer();
+				PlayerDied();
+
 			}
 
-			if (_machine.transform.position.y < _waterHeight)
-			{
-				RespawnMachine();
-			}
-
-		}
+            if (_player.gameObject.activeSelf && _player.transform.position.y < _waterHeight)
+            {
+                PlayerDied();
+            }
+        }
 		#endregion
 
 		#region Public Methods
@@ -146,52 +160,53 @@ namespace Deforestation
 
 
 
-		private void RespawnPlayer()
-		{
-			Rigidbody rb = _player.GetComponent<Rigidbody>();
-
-			if (rb != null)
-			{
-				rb.position = _playerSpawn.position;
-				rb.rotation = _playerSpawn.rotation;
-				rb.angularVelocity = Vector3.zero;
-			}
-			else
-			{
-				_player.transform.position = _playerSpawn.position;
-				_player.transform.rotation = _playerSpawn.rotation;
-			}
-		}
-
-		public void RespawnMachine()
-		{
-			Rigidbody rb = _machine.GetComponent<Rigidbody>();
-
-			if (rb != null)
-			{
-				rb.position = _machineSpawn.position;
-				rb.rotation = _machineSpawn.rotation;
-				rb.angularVelocity = Vector3.zero;
-			}
-			else
-			{
-				_machine.transform.position = _machineSpawn.position;
-				_machine.transform.rotation = _machineSpawn.rotation;
-			}
 
 
 
+            public void PlayerDied()
+        {
+            if (_deathPanel.activeSelf)
+                return;
+
+            _deathPanel.SetActive(true);
+
+            // Desactivar al player
+            _player.gameObject.SetActive(false);
+        }
+
+
+        public void RespawnPlayer()
+        {
+            //Activar temporalmente el player
+            _player.gameObject.SetActive(true);
+
+            //Desactivar CharacterController para moverlo correctamente
+            _player.enabled = false;
+
+            //Posición y rotación del SpawnPoint
+            _player.transform.position = _spawnPoint.position;
+            _player.transform.rotation = _spawnPoint.rotation;
+
+            //Volver a activar CharacterController
+            _player.enabled = true;
+
+            //Restaurar vida
+            _playerHealth.SetHealth(100f);
+
+            //Ocultar pantalla de muerte
+            _deathPanel.SetActive(false);
+        }
 
 
 
 
-			#endregion
+        #endregion
 
-			#region Private Methods
+        #region Private Methods
 
-			#endregion
+        #endregion
 
-		}
 
-	}
+
+    }
 }
