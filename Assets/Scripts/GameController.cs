@@ -5,7 +5,6 @@ using Deforestation.Recolectables;
 using Deforestation.Interaction;
 using Cinemachine;
 using System;
-using JetBrains.Annotations;
 
 namespace Deforestation
 {
@@ -17,10 +16,6 @@ namespace Deforestation
 		public InteractionSystem InteractionSystem => _interactionSystem;
 		public TreeTerrainController TerrainController => _terrainController;
 		public Camera MainCamera;
-		public GameObject FakeWater => _fakeWater;
-		public Transform SpawnPoint => _spawnPoint;
-		public GameObject DeathPanel => _deathPanel;
-
 
 		//Events
 		public Action<bool> OnMachineModeChange;
@@ -45,10 +40,6 @@ namespace Deforestation
 		[SerializeField] protected HealthSystem _playerHealth;
 		[SerializeField] protected Inventory _inventory;
 		[SerializeField] protected InteractionSystem _interactionSystem;
-		[SerializeField] protected Transform _spawnPoint;
-
-
-
 
 		[Header("Camera")]
 		[SerializeField] protected CinemachineVirtualCamera _virtualCamera;
@@ -57,21 +48,10 @@ namespace Deforestation
 
 		[Header("Machine")]
 		[SerializeField] protected MachineController _machine;
-		[SerializeField] private Transform _machineSpawn;
-
 		[Header("UI")]
 		[SerializeField] protected UIGameController _uiController;
-		[SerializeField] protected GameObject _deathPanel;
-
-
 		[Header("Trees Terrain")]
 		[SerializeField] protected TreeTerrainController _terrainController;
-		[SerializeField] protected GameObject _fakeWater;
-		[SerializeField] private float _waterHeight;
-
-
-
-
 
 		private bool _machineModeOn;
 		#endregion
@@ -84,30 +64,12 @@ namespace Deforestation
 			_playerHealth.OnHealthChanged += _uiController.UpdatePlayerHealth;
 			_machine.HealthSystem.OnHealthChanged += _uiController.UpdateMachineHealth;
 			MachineModeOn = false;
-
-            //Death
-            _playerHealth.OnDeath += PlayerDied;
-            _deathPanel.SetActive(false);
-
 		}
-
-
 
 		// Update is called once per frame
 		void Update()
 		{
-			//WaterDie
-			if (_player.transform.position.y < _waterHeight && _player.gameObject.activeSelf)
-			{
-				PlayerDied();
-
-			}
-
-            if (_player.gameObject.activeSelf && _player.transform.position.y < _waterHeight)
-            {
-                PlayerDied();
-            }
-        }
+		}
 		#endregion
 
 		#region Public Methods
@@ -153,60 +115,13 @@ namespace Deforestation
 				//Camera
 				_virtualCamera.Follow = _playerFollow;
 				Cursor.lockState = CursorLockMode.Locked;
-
 			}
 			Cursor.visible = machineMode;
 		}
+		#endregion
 
+		#region Private Methods
+		#endregion
+	}
 
-
-
-
-
-            public void PlayerDied()
-        {
-            if (_deathPanel.activeSelf)
-                return;
-
-            _deathPanel.SetActive(true);
-
-            // Desactivar al player
-            _player.gameObject.SetActive(false);
-        }
-
-
-        public void RespawnPlayer()
-        {
-            //Activar temporalmente el player
-            _player.gameObject.SetActive(true);
-
-            //Desactivar CharacterController para moverlo correctamente
-            _player.enabled = false;
-
-            //Posición y rotación del SpawnPoint
-            _player.transform.position = _spawnPoint.position;
-            _player.transform.rotation = _spawnPoint.rotation;
-
-            //Volver a activar CharacterController
-            _player.enabled = true;
-
-            //Restaurar vida
-            _playerHealth.SetHealth(100f);
-
-            //Ocultar pantalla de muerte
-            _deathPanel.SetActive(false);
-        }
-
-
-
-
-        #endregion
-
-        #region Private Methods
-
-        #endregion
-
-
-
-    }
 }
