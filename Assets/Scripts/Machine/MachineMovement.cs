@@ -59,7 +59,7 @@ namespace Deforestation.Machine
 		void CheckGround()
 		{
 			RaycastHit hit;
-			float maxDistance = 4f;
+			float maxDistance = 6f;
 			float force = 100000;
 			Vector3 direction = -transform.up;
 			
