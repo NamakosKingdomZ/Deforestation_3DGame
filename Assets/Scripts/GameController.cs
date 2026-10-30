@@ -61,8 +61,15 @@ namespace Deforestation
 		void Start()
 		{
 			//UI Update
-			_playerHealth.OnHealthChanged += _uiController.UpdatePlayerHealth;
-			_machine.HealthSystem.OnHealthChanged += _uiController.UpdateMachineHealth;
+			if (_uiController != null && _playerHealth != null)
+				_playerHealth.OnHealthChanged += _uiController.UpdatePlayerHealth;
+			else
+				Debug.LogError("GameController requires a player HealthSystem and UIGameController.", this);
+
+			if (_uiController != null && _machine != null && _machine.HealthSystem != null)
+				_machine.HealthSystem.OnHealthChanged += _uiController.UpdateMachineHealth;
+			else
+				Debug.LogError("GameController requires a machine with HealthSystem and UIGameController.", this);
 			MachineModeOn = false;
 		}
 

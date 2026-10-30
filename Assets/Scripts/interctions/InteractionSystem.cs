@@ -40,22 +40,32 @@ namespace Deforestation.Interaction
 		}
 		void FixedUpdate()
 		{
+			Camera mainCamera = Camera.main;
+			if (mainCamera == null)
+			{
+				_interactebleDetected = false;
+				_currentInteraction = null;
+				OnHideInteraction?.Invoke();
+				return;
+			}
+
 			RaycastHit hit;
-			if (Physics.SphereCast(Camera.main.transform.position, 0.5f, Camera.main.transform.forward, out hit, 5))
+			if (Physics.SphereCast(mainCamera.transform.position, 0.5f, mainCamera.transform.forward, out hit, 5))
 			{
 				//print(hit.collider.name); //Para saber que estamos detectando para depurar si alguna deteccion falla.
 				IInteractable interaction = hit.collider.GetComponent<IInteractable>();
 				if (interaction != null)
 				{
 					InteractableInfo info = interaction.GetInfo();
-					OnShowInteraction.Invoke("E - To " + info.Action + " " + info.Type);
+					OnShowInteraction?.Invoke("E - To " + info.Action + " " + info.Type);
 					_interactebleDetected = true;
 					_currentInteraction = interaction;
 					return;
 				}
 			}
 			_interactebleDetected = false;
-			OnHideInteraction.Invoke();
+			_currentInteraction = null;
+			OnHideInteraction?.Invoke();
 			
 		}
 		#endregion

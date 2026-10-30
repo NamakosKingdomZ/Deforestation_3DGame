@@ -24,6 +24,15 @@ namespace Deforestation
 			}
 		}
 
+		public static bool TryGetInstance(out T instance)
+		{
+			if (_instance == null)
+				_instance = FindObjectOfType<T>();
+
+			instance = _instance;
+			return instance != null;
+		}
+
 		protected virtual void Awake()
 		{
 			if (_instance == null)

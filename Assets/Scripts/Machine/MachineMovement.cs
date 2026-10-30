@@ -10,7 +10,7 @@ namespace Deforestation.Machine
 		[SerializeField] private float _speedRotation = 15;
 		private Rigidbody _rb;
 		private Vector3 _movementDirection;
-		private Inventory _inventory => GameController.Instance.Inventory;
+		private Inventory _inventory => Singleton<GameController>.TryGetInstance(out GameController controller) ? controller.Inventory : null;
 
 		[Header("Energy")]
 		[SerializeField] private float energyDecayRate = 20f;
@@ -28,7 +28,15 @@ namespace Deforestation.Machine
 
 		private void Update()
 		{
-			if (_inventory.HasResource(RecolectableType.HyperCrystal))
+			Inventory inventory = _inventory;
+			if (inventory == null)
+			{
+				_movementDirection = Vector3.zero;
+				CheckGround();
+				return;
+			}
+
+			if (inventory.HasResource(RecolectableType.HyperCrystal))
 			{
 				//Movement
 				_movementDirection = new Vector3(Input.GetAxis("Vertical"), 0, 0);
@@ -43,9 +51,9 @@ namespace Deforestation.Machine
 						_inventory.UseResource(RecolectableType.HyperCrystal);
 				}
 			}
-			else
+			else if (Singleton<GameController>.TryGetInstance(out GameController gameController) && gameController.MachineController != null)
 			{
-				GameController.Instance.MachineController.StopMoving();
+				gameController.MachineController.StopMoving();
 			}
 
 			CheckGround();
@@ -53,7 +61,8 @@ namespace Deforestation.Machine
 
 		private void FixedUpdate()
 		{
-			_rb.AddRelativeForce(_movementDirection.normalized * _speedForce, ForceMode.Impulse);
+			if (_rb != null)
+				_rb.AddRelativeForce(_movementDirection.normalized * _speedForce, ForceMode.Impulse);
 		}
 
 		void CheckGround()
@@ -76,10 +85,17 @@ namespace Deforestation.Machine
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (other.tag == "Tree")
+			if (other.CompareTag("Tree"))
 			{
-				int index = other.GetComponent<Tree>().Index;
-				GameController.Instance.TerrainController.DestroyTree(index, other.transform.position);
+				Tree tree = other.GetComponent<Tree>();
+				if (tree == null)
+				{
+					Debug.LogWarning("A collider tagged Tree has no Tree component.", other);
+					return;
+				}
+
+				if (Singleton<GameController>.TryGetInstance(out GameController gameController) && gameController.TerrainController != null)
+					gameController.TerrainController.DestroyTree(tree.Index, other.transform.position);
 			}
 
 			
